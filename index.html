@@ -14,17 +14,30 @@ h1{text-align:center;font-size:26px;color:#e94560;margin-bottom:8px}
 .card:hover{transform:translateY(-3px)}
 .card img{width:100%;display:block;aspect-ratio:9/16;object-fit:cover}
 .card .num{position:absolute;top:8px;left:8px;width:28px;height:28px;background:rgba(233,69,96,.85);border-radius:50%;color:#fff;font-size:14px;font-weight:bold;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:2}
-.card .name{padding:10px 12px;font-size:12px;color:#aaa;text-align:center;word-break:break-all}
+.card .info{padding:8px 12px}
+.card .info .model{font-size:12px;color:#e94560;font-weight:bold}
+.card .info .tag{font-size:11px;color:#888;margin-top:2px}
+.card .info .detail-btn{display:inline-block;margin-top:6px;padding:3px 10px;font-size:11px;color:#fff;background:rgba(233,69,96,.6);border:none;border-radius:4px;cursor:pointer;text-decoration:none}
+.card .info .detail-btn:hover{background:rgba(233,69,96,.9)}
 .lightbox{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.93);justify-content:center;align-items:center;cursor:pointer}
 .lightbox.show{display:flex}
 .lightbox img{max-width:94vw;max-height:94vh;object-fit:contain;border-radius:6px}
-.lightbox .close{position:fixed;top:16px;right:24px;font-size:36px;color:#fff;opacity:.6;cursor:pointer}
+.lightbox .close{position:fixed;top:16px;right:24px;font-size:36px;color:#fff;opacity:.6;cursor:pointer;z-index:10}
 .lightbox .close:hover{opacity:1}
 .lightbox .counter{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:#999;font-size:14px;background:rgba(0,0,0,.6);padding:6px 16px;border-radius:20px}
-.arrow{position:fixed;top:50%;transform:translateY(-50%);font-size:40px;color:#fff;opacity:.4;cursor:pointer;padding:20px;user-select:none}
+.arrow{position:fixed;top:50%;transform:translateY(-50%);font-size:40px;color:#fff;opacity:.4;cursor:pointer;padding:20px;user-select:none;z-index:10}
 .arrow:hover{opacity:.8}
 .arrow.left{left:10px}
 .arrow.right{right:10px}
+.modal{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);justify-content:center;align-items:center}
+.modal.show{display:flex}
+.modal-box{background:#1a1a2e;border:1px solid #333;border-radius:12px;padding:24px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto}
+.modal-box h2{color:#e94560;font-size:18px;margin-bottom:12px}
+.modal-box .field{margin-bottom:10px}
+.modal-box .field label{display:block;font-size:11px;color:#666;margin-bottom:2px}
+.modal-box .field .val{font-size:13px;color:#ddd;word-break:break-all;background:#0f0f1e;padding:6px 10px;border-radius:4px;line-height:1.5}
+.modal-box .close-btn{display:block;margin:16px auto 0;padding:6px 24px;background:#e94560;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px}
+.modal-box .close-btn:hover{background:#d63850}
 @media(max-width:480px){.grid{grid-template-columns:repeat(2,1fr);gap:8px}}
 </style>
 </head>
@@ -32,31 +45,131 @@ h1{text-align:center;font-size:26px;color:#e94560;margin-bottom:8px}
 <h1>🎨 壁纸图库</h1>
 <p class="sub">你说序号，我操作</p>
 <div class="grid" id="g"></div>
+
 <div class="lightbox" id="lb">
   <span class="close" onclick="lb.classList.remove('show')">&times;</span>
   <span class="arrow left" onclick="nav(-1)">&#10094;</span>
   <span class="arrow right" onclick="nav(1)">&#10095;</span>
   <img id="lbImg"><div class="counter" id="lbC"></div>
 </div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2 id="modalTitle">配置详情</h2>
+    <div id="modalBody"></div>
+    <button class="close-btn" onclick="document.getElementById('modal').classList.remove('show')">关闭</button>
+  </div>
+</div>
+
 <script>
-const IMAGES = [
-"test_cn_s33333_00001_.png",
-"wallpaper_chinese_v2_00001_.png",
-"dreamshaper_test_cn_11111.png",
-"pony_upscaled_日落草原.png",
-"pony_upscaled_樱花河畔.png"
+const DATA = [
+  {
+    f:"test_cn_s33333_00001_.png",
+    model:"Animagine XL 3.1",
+    tag:"中式·古镇",
+    detail:{
+      "模型":"Animagine XL 3.1 (SDXL)",
+      "提示词":"anime style, masterpiece, best quality, ancient Chinese town, Qingming Shanghe Tu style, cherry blossoms on both sides, people walking on stone bridge, small boats on river, traditional architecture, morning mist, warm lighting",
+      "负向提示词":"nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, people in water",
+      "采样器":"DPM++ 2M SDE Karras",
+      "步数":"30",
+      "CFG":"7",
+      "尺寸":"972×1728",
+      "种子":"33333"
+    }
+  },
+  {
+    f:"wallpaper_chinese_v2_00001_.png",
+    model:"Animagine XL 3.1",
+    tag:"中式·古镇 v2",
+    detail:{
+      "模型":"Animagine XL 3.1 (SDXL)",
+      "提示词":"masterpiece, best quality, ancient Chinese town, Qingming Shanghe Tu style, traditional architecture with flying eaves, stone bridge over river, cherry blossoms, people on bridge and streets, morning sunlight through mist,远处的山",
+      "负向提示词":"nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, cropped, worst quality, low quality, normal quality, jpeg artifacts, watermark, blurry, people in water",
+      "采样器":"DPM++ 2M SDE Karras",
+      "步数":"30",
+      "CFG":"7",
+      "尺寸":"972×1728",
+      "种子":"11111"
+    }
+  },
+  {
+    f:"dreamshaper_test_cn_11111.png",
+    model:"DreamShaper XL Turbo V2",
+    tag:"宫崎骏风·日式城堡",
+    detail:{
+      "模型":"DreamShaper XL Turbo V2 (SDXL)",
+      "提示词":"(masterpiece, best quality:1.2), Ghibli style, Studio Ghibli aesthetic, lush green hills, ancient Japanese castle on hilltop, colorful village below, fantastical sky with soft clouds, whimsical atmosphere, detailed architecture, cinematic lighting, vibrant colors",
+      "负向提示词":"nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, cropped, worst quality, low quality, normal quality, jpeg artifacts, watermark, blurry, photorealistic",
+      "采样器":"DPM++ 2M SDE Karras",
+      "步数":"30",
+      "CFG":"7",
+      "尺寸":"972×1728",
+      "种子":"11111"
+    }
+  },
+  {
+    f:"pony_upscaled_日落草原.png",
+    model:"Pony Diffusion V6 XL",
+    tag:"日落草原",
+    detail:{
+      "模型":"Pony Diffusion V6 XL",
+      "提示词":"score_9, score_8_up, source_anime, masterpiece, breathtaking sunset over vast grassland, golden hour, warm orange and purple sky, dramatic clouds, peaceful meadow, epic landscape, cinematic composition",
+      "负向提示词":"nsfw, lowres, bad anatomy, bad hands, text, error, worst quality, low quality, normal quality, jpeg artifacts, watermark, blurry",
+      "采样器":"DPM++ 2M Karras",
+      "步数":"30",
+      "CFG":"7",
+      "尺寸":"972×1728",
+      "放大":"4x-UltraSharp (4x)"
+    }
+  },
+  {
+    f:"pony_upscaled_樱花河畔.png",
+    model:"Pony Diffusion V6 XL",
+    tag:"樱花河畔",
+    detail:{
+      "模型":"Pony Diffusion V6 XL",
+      "提示词":"score_9, score_8_up, source_anime, masterpiece, cherry blossom trees along riverbank, pink petals falling on water, traditional bridge in background, spring atmosphere, soft sunlight through petals, peaceful scenery, dreamlike",
+      "负向提示词":"nsfw, lowres, bad anatomy, bad hands, text, error, worst quality, low quality, normal quality, jpeg artifacts, watermark, blurry",
+      "采样器":"DPM++ 2M Karras",
+      "步数":"30",
+      "CFG":"7",
+      "尺寸":"972×1728",
+      "放大":"4x-UltraSharp (4x)"
+    }
+  }
 ];
+
 let cur=-1;
 const g=document.getElementById('g');
-IMAGES.forEach((f,i)=>{
+DATA.forEach((d,i)=>{
   const c=document.createElement('div');c.className='card';
-  c.innerHTML='<div class="num">'+(i+1)+'</div><img src="images/'+f+'" onclick="openLB('+i+')"><div class="name">'+(i+1)+'. '+f.replace(/\.[^.]+$/,'')+'</div>';
+  let html='<div class="num">'+(i+1)+'</div>';
+  html+='<img src="images/'+d.f+'" onclick="openLB('+i+')">';
+  html+='<div class="info">';
+  html+='<div class="model">'+d.model+'</div>';
+  html+='<div class="tag">'+d.tag+'</div>';
+  html+='<button class="detail-btn" onclick="event.stopPropagation();showDetail('+i+')">📋 详情</button>';
+  html+='</div></div>';
+  c.innerHTML=html;
   g.appendChild(c);
 });
-function openLB(i){cur=i;document.getElementById('lbImg').src='images/'+IMAGES[i];document.getElementById('lbC').textContent='#'+(i+1)+'/'+IMAGES.length;document.getElementById('lb').classList.add('show')}
-function nav(d){let i=cur+d;if(i<0)i=IMAGES.length-1;if(i>=IMAGES.length)i=0;openLB(i)}
+
+function openLB(i){cur=i;document.getElementById('lbImg').src='images/'+DATA[i].f;document.getElementById('lbC').textContent='#'+(i+1)+'/'+DATA.length;document.getElementById('lb').classList.add('show')}
+function nav(d){let i=cur+d;if(i<0)i=DATA.length-1;if(i>=DATA.length)i=0;openLB(i)}
 document.getElementById('lb').onclick=function(e){if(e.target===this)this.classList.remove('show')}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('show');if(e.key==='ArrowLeft')nav(-1);if(e.key==='ArrowRight')nav(1)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){lb.classList.remove('show');document.getElementById('modal').classList.remove('show')}if(e.key==='ArrowLeft')nav(-1);if(e.key==='ArrowRight')nav(1)});
+
+function showDetail(i){
+  const d=DATA[i];
+  document.getElementById('modalTitle').textContent='#'+(i+1)+' 配置详情';
+  let h='';
+  for(const [k,v] of Object.entries(d.detail)){
+    h+='<div class="field"><label>'+k+'</label><div class="val">'+v+'</div></div>';
+  }
+  document.getElementById('modalBody').innerHTML=h;
+  document.getElementById('modal').classList.add('show');
+}
 </script>
 </body>
 </html>
