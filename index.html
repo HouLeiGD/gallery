@@ -65,6 +65,7 @@ const DATA = [
     f:"test_cn_s33333_00001_.png",
     model:"Animagine XL 3.1",
     tag:"中式·古镇",
+    size:"2.4 MB",
     detail:{
       "模型":"Animagine XL 3.1 (SDXL)",
       "提示词":"anime style, masterpiece, best quality, ancient Chinese town, Qingming Shanghe Tu style, cherry blossoms on both sides, people walking on stone bridge, small boats on river, traditional architecture, morning mist, warm lighting",
@@ -82,6 +83,7 @@ const DATA = [
     f:"wallpaper_chinese_v2_00001_.png",
     model:"Animagine XL 3.1",
     tag:"中式·古镇 v2",
+    size:"2.7 MB",
     detail:{
       "模型":"Animagine XL 3.1 (SDXL)",
       "提示词":"masterpiece, best quality, ancient Chinese town, Qingming Shanghe Tu style, traditional architecture with flying eaves, stone bridge over river, cherry blossoms, people on bridge and streets, morning sunlight through mist,远处的山",
@@ -99,6 +101,7 @@ const DATA = [
     f:"dreamshaper_test_cn_11111.png",
     model:"DreamShaper XL Turbo V2",
     tag:"宫崎骏风·日式城堡",
+    size:"1.6 MB",
     detail:{
       "模型":"DreamShaper XL Turbo V2 (SDXL)",
       "提示词":"(masterpiece, best quality:1.2), Ghibli style, Studio Ghibli aesthetic, lush green hills, ancient Japanese castle on hilltop, colorful village below, fantastical sky with soft clouds, whimsical atmosphere, detailed architecture, cinematic lighting, vibrant colors",
@@ -116,6 +119,7 @@ const DATA = [
     f:"pony_upscaled_日落草原.png",
     model:"Pony Diffusion V6 XL",
     tag:"日落草原",
+    size:"30 MB",
     detail:{
       "模型":"Pony Diffusion V6 XL",
       "提示词":"score_9, score_8_up, source_anime, masterpiece, breathtaking sunset over vast grassland, golden hour, warm orange and purple sky, dramatic clouds, peaceful meadow, epic landscape, cinematic composition",
@@ -133,6 +137,7 @@ const DATA = [
     f:"pony_upscaled_樱花河畔.png",
     model:"Pony Diffusion V6 XL",
     tag:"樱花河畔",
+    size:"41 MB",
     detail:{
       "模型":"Pony Diffusion V6 XL",
       "提示词":"score_9, score_8_up, source_anime, masterpiece, cherry blossom trees along riverbank, pink petals falling on water, traditional bridge in background, spring atmosphere, soft sunlight through petals, peaceful scenery, dreamlike",
@@ -156,7 +161,7 @@ DATA.forEach((d,i)=>{
   html+='<img src="images/'+d.f+'" onclick="openLB('+i+')">';
   html+='<div class="info">';
   html+='<div class="model">'+d.model+'</div>';
-  html+='<div class="tag">'+d.tag+'</div>';
+  html+='<div class="tag">'+d.tag+' · '+d.size+'</div>';
   html+='<button class="detail-btn" onclick="event.stopPropagation();showDetail('+i+')">📋 详情</button>';
   html+='</div></div>';
   c.innerHTML=html;
