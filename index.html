@@ -183,6 +183,10 @@ function showDetail(i){
   document.getElementById('modalBody').innerHTML=h;
   document.getElementById('modal').classList.add('show');
 }
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/gallery/sw.js');
+}
 </script>
 </body>
 </html>
