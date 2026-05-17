@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>🎨 壁纸图库</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1a1a2e;color:#eee;font:15px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:30px 20px}
+h1{text-align:center;font-size:26px;color:#e94560;margin-bottom:8px}
+.sub{text-align:center;color:#666;font-size:13px;margin-bottom:30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;max-width:1200px;margin:0 auto}
+.card{background:#16213e;border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .15s}
+.card:hover{transform:translateY(-3px)}
+.card img{width:100%;display:block;aspect-ratio:9/16;object-fit:cover}
+.card .name{padding:10px 12px;font-size:12px;color:#aaa;text-align:center;word-break:break-all}
+.lightbox{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.93);justify-content:center;align-items:center;cursor:pointer}
+.lightbox.show{display:flex}
+.lightbox img{max-width:94vw;max-height:94vh;object-fit:contain;border-radius:6px}
+.lightbox .close{position:fixed;top:16px;right:24px;font-size:36px;color:#fff;opacity:.6;cursor:pointer}
+.lightbox .close:hover{opacity:1}
+.lightbox .counter{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:#999;font-size:14px;background:rgba(0,0,0,.6);padding:6px 16px;border-radius:20px}
+.arrow{position:fixed;top:50%;transform:translateY(-50%);font-size:40px;color:#fff;opacity:.4;cursor:pointer;padding:20px;user-select:none}
+.arrow:hover{opacity:.8}
+.arrow.left{left:10px}
+.arrow.right{right:10px}
+@media(max-width:480px){.grid{grid-template-columns:repeat(2,1fr);gap:8px}}
+</style>
+</head>
+<body>
+<h1>🎨 壁纸图库</h1>
+<p class="sub">AI Generated Wallpapers</p>
+<div class="grid" id="g"></div>
+<div class="lightbox" id="lb">
+  <span class="close" onclick="lb.classList.remove('show')">&times;</span>
+  <span class="arrow left" onclick="nav(-1)">&#10094;</span>
+  <span class="arrow right" onclick="nav(1)">&#10095;</span>
+  <img id="lbImg"><div class="counter" id="lbC"></div>
+</div>
+<script>
+const IMAGES = [
+"animagine_final_11111.png",
+"dreamshaper_final_11111.png",
+"juggernaut_final_11111.png",
+"test_cn_s11111_00001_.png",
+"test_cn_s22222_00001_.png",
+"test_cn_s33333_00001_.png",
+"test_cn_s44444_00001_.png",
+"test_jp_s55555_00001_.png",
+"test_jp_s66666_00001_.png",
+"test_jp_s77777_00001_.png",
+"test_jp_s88888_00001_.png",
+"wallpaper_anime_00001_.png",
+"wallpaper_chinese_00001_.png",
+"wallpaper_chinese_v2_00001_.png",
+"wallpaper_japanese_00001_.png",
+"wallpaper_japanese_v2_00001_.png",
+"dreamshaper_test_cn_11111.png",
+"juggernaut_test_cn_11111.png",
+"sdxl_test_cn_11111.png",
+"anime_cherry_blossom_00001_.png",
+"hermes_sd15_00001_.png",
+"realistic_mountain_lake_00001_.png",
+"pony_upscaled_日落草原.png",
+"pony_upscaled_樱花河畔.png"
+];
+let cur=-1;
+const g=document.getElementById('g');
+IMAGES.forEach((f,i)=>{
+  const c=document.createElement('div');c.className='card';
+  c.innerHTML='<img src="images/'+f+'" onclick="openLB('+i+')"><div class="name">'+f.replace(/\.[^.]+$/,'')+'</div>';
+  g.appendChild(c);
+});
+function openLB(i){cur=i;document.getElementById('lbImg').src='images/'+IMAGES[i];document.getElementById('lbC').textContent=(i+1)+'/'+IMAGES.length;document.getElementById('lb').classList.add('show')}
+function nav(d){let i=cur+d;if(i<0)i=IMAGES.length-1;if(i>=IMAGES.length)i=0;openLB(i)}
+document.getElementById('lb').onclick=function(e){if(e.target===this)this.classList.remove('show')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('show');if(e.key==='ArrowLeft')nav(-1);if(e.key==='ArrowRight')nav(1)});
+</script>
+</body>
+</html>
