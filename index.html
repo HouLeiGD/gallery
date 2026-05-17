@@ -185,7 +185,8 @@ function showDetail(i){
 }
 
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('/gallery/sw.js');
+  const base = location.hostname === 'houleigd.github.io' ? '/gallery/sw.js' : '/sw.js';
+  navigator.serviceWorker.register(base);
 }
 </script>
 </body>
