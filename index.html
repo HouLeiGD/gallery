@@ -10,9 +10,10 @@ body{background:#1a1a2e;color:#eee;font:15px -apple-system,BlinkMacSystemFont,'S
 h1{text-align:center;font-size:26px;color:#e94560;margin-bottom:8px}
 .sub{text-align:center;color:#666;font-size:13px;margin-bottom:30px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;max-width:1200px;margin:0 auto}
-.card{background:#16213e;border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .15s}
+.card{background:#16213e;border-radius:10px;overflow:hidden;cursor:pointer;position:relative;transition:transform .15s}
 .card:hover{transform:translateY(-3px)}
 .card img{width:100%;display:block;aspect-ratio:9/16;object-fit:cover}
+.card .num{position:absolute;top:8px;left:8px;width:28px;height:28px;background:rgba(233,69,96,.85);border-radius:50%;color:#fff;font-size:14px;font-weight:bold;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:2}
 .card .name{padding:10px 12px;font-size:12px;color:#aaa;text-align:center;word-break:break-all}
 .lightbox{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.93);justify-content:center;align-items:center;cursor:pointer}
 .lightbox.show{display:flex}
@@ -29,7 +30,7 @@ h1{text-align:center;font-size:26px;color:#e94560;margin-bottom:8px}
 </head>
 <body>
 <h1>🎨 壁纸图库</h1>
-<p class="sub">AI Generated Wallpapers</p>
+<p class="sub">你说序号，我操作</p>
 <div class="grid" id="g"></div>
 <div class="lightbox" id="lb">
   <span class="close" onclick="lb.classList.remove('show')">&times;</span>
@@ -68,10 +69,10 @@ let cur=-1;
 const g=document.getElementById('g');
 IMAGES.forEach((f,i)=>{
   const c=document.createElement('div');c.className='card';
-  c.innerHTML='<img src="images/'+f+'" onclick="openLB('+i+')"><div class="name">'+f.replace(/\.[^.]+$/,'')+'</div>';
+  c.innerHTML='<div class="num">'+(i+1)+'</div><img src="images/'+f+'" onclick="openLB('+i+')"><div class="name">'+(i+1)+'. '+f.replace(/\.[^.]+$/,'')+'</div>';
   g.appendChild(c);
 });
-function openLB(i){cur=i;document.getElementById('lbImg').src='images/'+IMAGES[i];document.getElementById('lbC').textContent=(i+1)+'/'+IMAGES.length;document.getElementById('lb').classList.add('show')}
+function openLB(i){cur=i;document.getElementById('lbImg').src='images/'+IMAGES[i];document.getElementById('lbC').textContent='#'+(i+1)+'/'+IMAGES.length;document.getElementById('lb').classList.add('show')}
 function nav(d){let i=cur+d;if(i<0)i=IMAGES.length-1;if(i>=IMAGES.length)i=0;openLB(i)}
 document.getElementById('lb').onclick=function(e){if(e.target===this)this.classList.remove('show')}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('show');if(e.key==='ArrowLeft')nav(-1);if(e.key==='ArrowRight')nav(1)});
